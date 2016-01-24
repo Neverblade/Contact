@@ -1,6 +1,6 @@
 $(document).ready(function() {
     var namespace = ''
-    var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+    var socket = io.connect('https://' + document.domain + ':' + location.port + namespace);
 
     /* Initial Name Grabbing */
     var name = prompt("Please enter your name.");
