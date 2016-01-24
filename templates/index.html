@@ -40,6 +40,7 @@
 
     var namespace = ''
     var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+    console.log("Connected!");
 
     /* Initial Name Grabbing */
     var name = "Anonymous Cow"
@@ -47,14 +48,18 @@
     if (name === null || name == '' || name == 'null') {
         name = "Anonymous Cow"
     }
-    //name = $.trim(name);
+    name = $.trim(name);
+    console.log("Locally grabbed name, sending it to server.");
     socket.emit('add player', { name: name });
+    console.log("Name sent!");
 
     /* Mechanics for sending a chat message */
     var chatSubmit = function() {
         var obj = $("#chat-area");
         if (obj.val() != "") {
+            console.log("Sending chat messsage to server.");
             socket.emit('chat', {msg: obj.val()});
+            console.log("Chat message sent!");
             obj.val('');
         }
     }
@@ -76,7 +81,9 @@
     var wordSubmit = function() {
         var obj = $("#word-field");
         if (obj.val() != "") {
+            console.log("Submitting word to server.");
             socket.emit('submit', {word: obj.val()});
+            console.log("Word submitted!");
             obj.val("");
         }
     }
@@ -96,11 +103,13 @@
 
     /* Handler: Setting the name */
     socket.on('set name', function(data) {
+        console.log("Got official name from server, setting it.");
         name = data.name;
     });
 
     /* Handler: Receiving a chat message to show */
     socket.on('chat', function(data) {
+        console.log("Received chat message from server.");
         var code = '';
         if (name == data.name) {
             code += "<div class=\"message bubble-right\">";
@@ -128,6 +137,7 @@
 
     /* Handler: Receiving user list info */
     socket.on('update user list', function(data) {
+        console.log("Received user data from server.");
         var tokens = data.list.split("! : !");
         var code = "";
         var numPlayers = parseInt(tokens[0]);
@@ -150,6 +160,7 @@
 
     /* Handler: Receiving game information */
     socket.on('update info', function(data) {
+        console.log("Received game info from server.");
         if (data.bool == 'TRUE') {
             $('#word-field').prop('disabled', false);
         } else {
@@ -161,6 +172,7 @@
 
     /* Handler: Receiving error information */
     socket.on('error', function(data) {
+        console.log("Received error message from server.");
         $("#error-message").text(data.error);
     });
 
