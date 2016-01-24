@@ -42,11 +42,12 @@
     var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
 
     /* Initial Name Grabbing */
-    var name = prompt("Please enter your name.");
-    name = $.trim(name);
-    if (name == null || name == '') {
+    var name = "Anonymous Cow"
+    name = prompt("Please enter your name.");
+    if (name === null || name == '' || name == 'null') {
         name = "Anonymous Cow"
     }
+    //name = $.trim(name);
     socket.emit('add player', { name: name });
 
     /* Mechanics for sending a chat message */

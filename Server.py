@@ -3,6 +3,7 @@ from flask.ext.socketio import SocketIO, join_room, emit
 from uuid import uuid4
 from Contact import Contact, Player
 import random
+import os
 
 # Debugging Messages
 DEBUG = True
@@ -134,4 +135,5 @@ def disconnect():
     debug(session['id'] + " disconnected.")
 
 if __name__ == '__main__':
-    socketio.run(app)
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, port=port)
