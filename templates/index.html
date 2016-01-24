@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Contact!</title>
+    <link rel="stylesheet" href="../static/style.css" media="screen" type="text/css" />
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <!-- <script type="text/javascript" src="/static/index.js"></script> -->
+</head>
+
+<body>
+    <div class="message-container">
+        <div class="message-north">
+            <ul id="message-user-list" class="message-user-list"></ul>
+            <div id="message-thread" class="message-thread"></div>
+
+        </div>
+        <div class="message-south">
+            <div class="word-submit">
+                <input id="word-field" type="text"/>
+                <button id="word-submit-button" class="word-submit-button">Submit</button>
+                <p id="selected-word" class="selected-word"></p>
+                <p id="error-message" class="error-message">Use this box to submit words.</p>
+            </div>
+
+            <div class="chat-submit">
+                <textarea id="chat-area" class="chat-area" cols="20" rows="1"></textarea>
+                <button id="chat-submit-button" class="chat-submit-button">Send</button>
+                <p id="revealed-word" class="revealed-word"></p>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    document.getElementById("word-submit-button").tabIndex = -1;
+    document.getElementById("chat-submit-button").tabIndex = -1;
+
+    var namespace = ''
+    var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+
+    /* Initial Name Grabbing */
+    var name = prompt("Please enter your name.");
+    name = $.trim(name);
+    if (name == null || name == '') {
+        name = "Anonymous Cow"
+    }
+    socket.emit('add player', { name: name });
+
+    /* Mechanics for sending a chat message */
+    var chatSubmit = function() {
+        var obj = $("#chat-area");
+        if (obj.val() != "") {
+            socket.emit('chat', {msg: obj.val()});
+            obj.val('');
+        }
+    }
+
+    /* Behavior: user presses Send */
+    $("#chat-submit-button").click(function() {
+        chatSubmit();
+    });
+
+    /* Behavior: user presses enter key while in chat area */
+    $("#chat-area").keydown(function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            chatSubmit();
+        }
+    });
+
+    /* Mechanics for submitting a word */
+    var wordSubmit = function() {
+        var obj = $("#word-field");
+        if (obj.val() != "") {
+            socket.emit('submit', {word: obj.val()});
+            obj.val("");
+        }
+    }
+
+    /* Behavior: user presses Submit */
+    $("#word-submit-button").click(function() {
+        wordSubmit();
+    });
+
+    /* Behavior: users presses enter key while in word field */
+    $("#word-field").keydown(function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            wordSubmit();
+        }
+    });
+
+    /* Handler: Setting the name */
+    socket.on('set name', function(data) {
+        name = data.name;
+    });
+
+    /* Handler: Receiving a chat message to show */
+    socket.on('chat', function(data) {
+        var code = '';
+        if (name == data.name) {
+            code += "<div class=\"message bubble-right\">";
+        } else if (data.system == "TRUE") {
+            code += "<div class=\"message bubble-mid\">";
+        } else {
+            code += "<div class=\"message bubble-left\">";
+        }
+        code += "<label class=\"message-user\">"
+        code += data.name;
+        if (data.king == "TRUE") {
+            code += " <b>(King)</b>";
+        }
+        code += "</label><p>"
+        code += data.msg;
+        code += "</p></div>"
+        var obj = $("#message-thread");
+        var diff = obj.scrollTop() - (obj.prop('scrollHeight') - obj.height());
+        bool = diff < 5 && diff > -5;
+        obj.append(code);
+        if (bool) {
+            obj.scrollTop(obj.prop('scrollHeight'));
+        }
+    });
+
+    /* Handler: Receiving user list info */
+    socket.on('update user list', function(data) {
+        var tokens = data.list.split("! : !");
+        var code = "";
+        var numPlayers = parseInt(tokens[0]);
+        for (var i = 0; i < numPlayers; i++) {
+            var n = tokens[2*i + 1]
+            var position = tokens[2*i + 2]
+            code += "<li><a";
+            if (name == n) {
+                //console.log("Matching names");
+                code += " class=\"you\"";
+            }
+            code += "><span class=\"user-title\">";
+            code += n;
+            code += "</span><p class=\"user-desc\">";
+            code += position;
+            code += "</p></a></li>";
+        }
+        $("#message-user-list").html(code);
+    });
+
+    /* Handler: Receiving game information */
+    socket.on('update info', function(data) {
+        if (data.bool == 'TRUE') {
+            $('#word-field').prop('disabled', false);
+        } else {
+            $('#word-field').prop('disabled', true);
+        }
+        $("#selected-word").text(data.word);
+        $("#revealed-word").text("Revealed: " + data.revealed);
+    });
+
+    /* Handler: Receiving error information */
+    socket.on('error', function(data) {
+        $("#error-message").text(data.error);
+    });
+
+</script>
+</html>
