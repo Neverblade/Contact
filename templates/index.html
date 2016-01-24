@@ -7,14 +7,42 @@
     <link rel="stylesheet" href="../static/style.css" media="screen" type="text/css" />
     <script type="text/javascript" src="//code.jquery.com/jquery-1.12.0.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
-    <!-- <script type="text/javascript" src="/static/index.js"></script> -->
 </head>
 
 <body>
     <div class="message-container">
         <div class="message-north">
             <ul id="message-user-list" class="message-user-list"></ul>
-            <div id="message-thread" class="message-thread"></div>
+            <div id="message-thread" class="message-thread">
+                <div class="message bubble-left">
+                    <label class="message-user">TUTORIAL</label>
+                    <p>Welcome to Contact! This word game pits one king against a team of challengers. At the beginning of every round, the king sets a secret word. The goal of the challengers is to reveal that word, while the king holds them off as long as possible.</p>
+                </div>
+                <div class="message bubble-right">
+                    <label class="message-user">TUTORIAL</label>
+                    <p>At the bottom of the screen, you can see how much of the word has been revealed so far. Progress is made througha process called CONTACT.</p>
+                </div>
+                <div class="message bubble-left">
+                    <label class="message-user">TUTORIAL</label>
+                    <p>During the game, players can submit words using the box on the left side. Contact occurs when two challengers submit identical words. Submitted words cannot have been used before and must begin with the currently revealed letters. They also cannot have been said on the chat, so watch what you say!</p>
+                </div>
+                <div class="message bubble-right">
+                    <label class="message-user">TUTORIAL</label>
+                    <p>The king can also submit words of their own. Whenever they submit a word that matches that of a challenger, or a challenger submits a word that matches that of the king, that word is locked down and cannot be used again.</p>
+                </div>
+                <div class="message bubble-left">
+                    <label class="message-user">TUTORIAL</label>
+                    <p>Every time CONTACT is made, a new letter in the secret word is revealed. The game ends when either all the letters in the word are revealed, or when the secret word itself is guessed through CONTACT.</p>
+                </div>
+                <div class="message bubble-mid">
+                    <label class="message-user">TUTORIAL</label>
+                    <p>Grey messages represent messages from the announcer, who keeps the players updated with the game's progress.</p>
+                </div>
+                <div class="message bubble-left">
+                    <label class="message-user">TUTORIAL</label>
+                    <p>Contact is all about using the chat creatively to hint to your fellow challengers while not tipping off the king. Good luck, and fight for that throne!</p>
+                </div>
+            </div>
 
         </div>
         <div class="message-south">
@@ -146,7 +174,6 @@
             var position = tokens[2*i + 2]
             code += "<li><a";
             if (name == n) {
-                //console.log("Matching names");
                 code += " class=\"you\"";
             }
             code += "><span class=\"user-title\">";

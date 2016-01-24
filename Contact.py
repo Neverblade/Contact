@@ -291,6 +291,18 @@ class Contact:
     def add_message(self, message):
         self.messages.append(message)
 
+    """
+    PUBLIC
+    Takes in a chat message and scans it for valid words. If any, puts them in seen_words.
+    Only works in ACTIVE mode.
+    """
+    def parse_chat(self, msg):
+        assert self.game_state == Contact.ACTIVE
+        tokens = msg.upper().split()
+        for token in tokens:
+            if self.valid_word(token) == 1 and token != self.word:
+                self.seen_words.add(token)
+
 
 class Player:
 

@@ -86,6 +86,8 @@ Handler: Client sends a chat message to the server.
 """
 @socketio.on('chat', namespace='/')
 def chat(data):
+    if contact.game_state == Contact.ACTIVE:
+        contact.parse_chat(data['msg'])
     name = id_to_name[session['id']]
     debug(name + " sent a chat message.")
     king = contact.find_king()
