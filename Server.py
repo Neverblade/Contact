@@ -135,5 +135,5 @@ def disconnect():
     debug(session['id'] + " disconnected.")
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    socketio.run(app, port=port)
+    #port = int(os.environ.get("PORT", 5000))
+    socketio.run(app)
