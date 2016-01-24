@@ -39,7 +39,7 @@
     document.getElementById("chat-submit-button").tabIndex = -1;
 
     var namespace = ''
-    var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+    var socket = io.connect('https://' + document.domain + ':' + location.port + namespace);
     console.log("Connected!");
 
     /* Initial Name Grabbing */
