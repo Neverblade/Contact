@@ -139,4 +139,5 @@ def disconnect():
 if __name__ == '__main__':
     debug("HELLO WORLD!")
     port = int(os.environ.get("PORT", 5000))
+    #socketio.run(app)
     socketio.run(app, host='0.0.0.0', port=port)

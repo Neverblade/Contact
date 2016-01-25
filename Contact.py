@@ -23,6 +23,7 @@ class Contact:
         self.seen_words = set()  # What words have already been said before
         self.game_state = Contact.IDLE  # The state of the game.
         self.messages = []  # All messages the server needs to display.
+        self.dictionary = self.load_dictionary()  # Dictionary of all words
 
     """
     The substring of the word that's currently revealed to challengers.
@@ -157,6 +158,8 @@ class Contact:
             return "Player not found. No one should every see this text."
         if player.position == Player.KING:
             if self.game_state == Contact.STANDBY:
+                if word not in self.dictionary:
+                    return "Not a valid word."
                 player.word = word
                 self.start_game()
                 self.add_message("The king has selected a word. Game start!")
@@ -192,16 +195,15 @@ class Contact:
                         self.clear_words()
                         return ""
                     else:  # Contact with another player
-                        self.add_message("Contact! " + other_player.name + " and " + player.name
-                                         + " advance the game with the word \"" + word + "\".")
-                        king = self.find_king()
-                        if king.word == word:  # The King's word was guessed through Contact!
+                        if self.word == word:  # The King's word was guessed through Contact!
                             self.add_message(other_player.name + " has overthrown the king!")
                             self.add_message("The word was \"" + word + "\".")
                             self.clear_game()
                             self.manual_init_game(other_player)
                             return ""
                         else:  # Advance regularly, check for exhaustion win condition
+                            self.add_message("Contact! " + other_player.name + " and " + player.name
+                                             + " advance the game with the word \"" + word + "\".")
                             self.seen_words.add(word)
                             self.advance_game()
                             if self.revealed == self.word:
@@ -302,6 +304,17 @@ class Contact:
         for token in tokens:
             if self.valid_word(token) == 1 and token != self.word:
                 self.seen_words.add(token)
+
+    """
+    Loads in the dictionary
+    """
+    def load_dictionary(self):
+        f = open("dictionary.txt", "r")
+        dictionary = set()
+        for line in f:
+            for token in line.split():
+                dictionary.add(token)
+        return dictionary
 
 
 class Player:
