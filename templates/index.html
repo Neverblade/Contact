@@ -73,10 +73,10 @@
     /* Initial Name Grabbing */
     var name = "Anonymous Cow"
     name = prompt("Please enter your name. (max 14 characters)").substring(0, 14);
+    name = $.trim(name);
     if (name === null || name == '' || name == 'null' || name.length > 14) {
         name = "Anonymous Cow"
     }
-    name = $.trim(name);
     console.log("Locally grabbed name, sending it to server.");
     socket.emit('add player', { name: name });
     console.log("Name sent!");
